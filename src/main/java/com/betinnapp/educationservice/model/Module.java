@@ -11,6 +11,10 @@ import java.util.UUID;
 @Table(name = "module")
 public class Module {
 
+    public Module() {
+        this.status = StatusType.LOCKED;
+    }
+
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(
@@ -30,8 +34,11 @@ public class Module {
     private String image;
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "submodule_id")
+    @JoinColumn(name = "module_id")
     private Collection<Submodule> submodule;
+
+    @Column
+    private int moduleOrder;
 
     @Transient
     private StatusType status;
@@ -82,5 +89,13 @@ public class Module {
 
     public void setSubmodule(Collection<Submodule> submodule) {
         this.submodule = submodule;
+    }
+
+    public int getModuleOrder() {
+        return moduleOrder;
+    }
+
+    public void setModuleOrder(int moduleOrder) {
+        this.moduleOrder = moduleOrder;
     }
 }

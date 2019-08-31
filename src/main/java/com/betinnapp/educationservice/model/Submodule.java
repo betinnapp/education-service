@@ -2,7 +2,6 @@ package com.betinnapp.educationservice.model;
 
 import com.betinnapp.educationservice.model.type.StatusType;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -10,6 +9,10 @@ import java.util.UUID;
 @Entity
 @Table(name = "submodule")
 public class Submodule {
+
+    public Submodule() {
+        this.status = StatusType.LOCKED;
+    }
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -31,6 +34,9 @@ public class Submodule {
 
     @Column
     private UUID quizId;
+
+    @Column
+    private int submoduleOrder;
 
     @Transient
     private StatusType status;
@@ -81,5 +87,13 @@ public class Submodule {
 
     public void setStatus(StatusType status) {
         this.status = status;
+    }
+
+    public int getSubmoduleOrder() {
+        return submoduleOrder;
+    }
+
+    public void setSubmoduleOrder(int submoduleOrder) {
+        this.submoduleOrder = submoduleOrder;
     }
 }

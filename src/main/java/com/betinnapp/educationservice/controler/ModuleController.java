@@ -1,11 +1,9 @@
 package com.betinnapp.educationservice.controler;
 
+import com.betinnapp.educationservice.model.dto.AuthTokenDTO;
 import com.betinnapp.educationservice.service.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.betinnapp.educationservice.model.Module;
 
 import java.util.List;
@@ -19,9 +17,7 @@ public class ModuleController {
     private ModuleService moduleService;
 
     @GetMapping(path = "/list")
-    public List<Module> listModules() {
-        return moduleService.listModules();
+    public List<Module> listModules(@RequestBody AuthTokenDTO token) {
+        return moduleService.listModulesByToken(token.get());
     }
-
-
 }
