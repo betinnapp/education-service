@@ -26,7 +26,7 @@ public class ModuleService {
         HashMap<UUID, StatusType> userProgress = userProgressService.getUserProgressByToken(token);
 
         if (userProgress != null && userProgress.isEmpty())
-            return modules;
+            userProgressService.generateFirstProgressByToken(token);
 
         return getModuleProgression(modules, userProgress);
     }
@@ -47,5 +47,8 @@ public class ModuleService {
         return modules;
     }
 
+    public List<Module> findAll(){
+        return moduleRepository.findAll();
+    }
 
 }
