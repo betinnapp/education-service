@@ -97,4 +97,38 @@ public class UserProgressService {
 
         return userProgress;
     }
+
+    public void completeSubmodule(UUID submoduleID, UUID moduleID, UUID userToken) {
+
+        UUID userID = userService.findUserIdByToken(userToken);
+        UserProgress userProgress = userProgressRepository.findByModuleIDAndUserId(submoduleID, userID);
+        userProgress.setStatusType(StatusType.COMPLETED);
+        userProgressRepository.save(userProgress);
+
+        verifyModuleCompletition(moduleID, userToken);
+    }
+
+    private void verifyModuleCompletition(UUID moduleID, UUID userToken) {
+        List<Module> userModules = moduleService.listModulesByToken(userToken);
+        UUID userID = userService.findUserIdByToken(userToken);
+        Boolean completed = true;
+        for (Module m : userModules) {
+            if (m.getId().equals(moduleID)) {
+                for (Submodule s : m.getSubmodule()) {
+                    if (s.getStatus() != StatusType.COMPLETED) {
+                        completed = false;
+                    }
+                }
+
+                if (completed) {
+                    UserProgress userProgress = userProgressRepository.findByModuleIDAndUserId(m.getId(), userID);
+                    userProgress.setStatusType(StatusType.COMPLETED);
+                    userProgressRepository.save(userProgress);
+
+                    unlockNextModuleByToken(userToken);
+                }
+                break;
+            }
+        }
+    }
 }

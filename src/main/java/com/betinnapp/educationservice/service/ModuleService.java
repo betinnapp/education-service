@@ -36,8 +36,8 @@ public class ModuleService {
             if (userProgress.containsKey(m.getId())) {
                 m.setStatus(userProgress.get(m.getId()));
 
-                for (Submodule s : m.getSubmodule()){
-                    if (userProgress.containsKey(s.getId())){
+                for (Submodule s : m.getSubmodule()) {
+                    if (userProgress.containsKey(s.getId())) {
                         s.setStatus(userProgress.get(s.getId()));
                     }
                 }
@@ -47,8 +47,11 @@ public class ModuleService {
         return modules;
     }
 
-    public List<Module> findAll(){
+    public List<Module> findAll() {
         return moduleRepository.findAll();
     }
 
+    public void save(Module module) {
+        moduleRepository.save(module);
+    }
 }

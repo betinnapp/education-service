@@ -50,6 +50,14 @@ public class ModuleController {
     }
 
     @ResponseStatus(code = HttpStatus.OK)
+    @PostMapping(path = "/{moduleId}/submodule/{submoduleId}/completed")
+    public void completeSubmodule(@PathVariable("submoduleId") String submoduleId, @PathVariable("moduleId") String moduleId, @RequestBody AuthTokenDTO token) throws InvalidTokenException, NotFoundException {
+
+        userService.tokenIsValid(token.get());
+        userProgressService.completeSubmodule(UUID.fromString(submoduleId), UUID.fromString(moduleId), token.get());
+    }
+
+    @ResponseStatus(code = HttpStatus.OK)
     @PostMapping(path = "/unlock/next")
     public void unlockModule(@RequestBody AuthTokenDTO token) throws InvalidTokenException {
 

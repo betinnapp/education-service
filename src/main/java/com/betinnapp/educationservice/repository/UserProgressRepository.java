@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface UserProgressRepository extends JpaRepository<UserProgress, UUID> {
 
     List<UserProgress> findByUserId(UUID userId);
+
+    UserProgress findByModuleIDAndUserId(UUID moduleID, UUID userID);
 }
