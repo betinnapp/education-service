@@ -10,6 +10,7 @@ import com.betinnapp.educationservice.repository.UserProgressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -106,9 +107,10 @@ public class UserProgressService {
         userProgressRepository.save(userProgress);
 
         verifyModuleCompletition(moduleID, userToken);
+        verifySubmoduleUnlock(moduleID, userToken);
     }
 
-    private void verifyModuleCompletition(UUID moduleID, UUID userToken) {
+    public void verifyModuleCompletition(UUID moduleID, UUID userToken) {
         List<Module> userModules = moduleService.listModulesByToken(userToken);
         UUID userID = userService.findUserIdByToken(userToken);
         Boolean completed = true;
@@ -128,6 +130,23 @@ public class UserProgressService {
                     unlockNextModuleByToken(userToken);
                 }
                 break;
+            }
+        }
+    }
+
+    public void verifySubmoduleUnlock(UUID moduleID, UUID userToken) {
+        List<Module> userModules = moduleService.listModulesByToken(userToken);
+        UUID userID = userService.findUserIdByToken(userToken);
+
+        for (Module m : userModules) {
+            if (m.getId().equals(moduleID)) {
+                for (Submodule s : m.getSubmodule()) {
+                    if (s.getStatus() == StatusType.LOCKED) {
+                        createUserProgress(userID, s.getId(), ModuleType.SUBMODULE, StatusType.UNLOCKED);
+
+                        break;
+                    }
+                }
             }
         }
     }
