@@ -4,9 +4,13 @@ import java.util.UUID;
 
 public class AuthTokenDTO {
 
-    public UUID token;
+    private UUID token;
 
     public UUID get() {
         return token;
+    }
+
+    public void setToken(UUID token) {
+        this.token = token;
     }
 }

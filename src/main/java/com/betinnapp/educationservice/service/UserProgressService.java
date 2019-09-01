@@ -10,8 +10,6 @@ import com.betinnapp.educationservice.repository.UserProgressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -28,40 +26,47 @@ public class UserProgressService {
     @Autowired
     private ModuleService moduleService;
 
-    public void generateFirstProgressByToken(UUID userToken){
+    public void generateFirstProgressByToken(UUID userToken) {
         User user = userService.findUserByToken(userToken);
         int steps = user.getInitialScore().intValue() / 5;
         List<Module> modules = moduleService.findAll();
 
-        for (int x=0; x < steps; x++ ){
+        for (int x = 0; x < steps; x++) {
             unlockNextModule(user, modules);
         }
+    }
+
+    public void unlockNextModuleByToken(UUID token) {
+        User user = userService.findUserByToken(token);
+        List<Module> modules = moduleService.listModulesByToken(token);
+
+        unlockNextModule(user, modules);
     }
 
     private Boolean unlockNextModule(User user, List<Module> modules) {
         Boolean modify = false;
 
-        for(Module m : modules){
+        for (Module m : modules) {
 
-            if (m.getStatus() == StatusType.LOCKED){
+            if (m.getStatus() == StatusType.LOCKED) {
                 m.setStatus(StatusType.UNLOCKED);
-                createUserProgress(user.getId(),m.getId(), ModuleType.MODULE,StatusType.UNLOCKED);
+                createUserProgress(user.getId(), m.getId(), ModuleType.MODULE, StatusType.UNLOCKED);
                 Submodule submodule = m.getSubmodule().iterator().next();
                 submodule.setStatus(StatusType.UNLOCKED);
-                createUserProgress(user.getId(),submodule.getId(), ModuleType.SUBMODULE,StatusType.UNLOCKED);
+                createUserProgress(user.getId(), submodule.getId(), ModuleType.SUBMODULE, StatusType.UNLOCKED);
                 break;
             }
 
-            for (Submodule s : m.getSubmodule()){
+            for (Submodule s : m.getSubmodule()) {
 
-                if(s.getStatus() == StatusType.LOCKED){
+                if (s.getStatus() == StatusType.LOCKED) {
                     s.setStatus(StatusType.UNLOCKED);
-                    createUserProgress(user.getId(),s.getId(),ModuleType.SUBMODULE,StatusType.UNLOCKED);
+                    createUserProgress(user.getId(), s.getId(), ModuleType.SUBMODULE, StatusType.UNLOCKED);
                     modify = true;
                     break;
                 }
             }
-            if (modify){
+            if (modify) {
                 modify = false;
                 break;
             }
@@ -69,7 +74,7 @@ public class UserProgressService {
         return modify;
     }
 
-    public void createUserProgress(UUID userId, UUID moduleId, ModuleType moduleType, StatusType statusType){
+    public void createUserProgress(UUID userId, UUID moduleId, ModuleType moduleType, StatusType statusType) {
         UserProgress userProgress = new UserProgress();
 
         userProgress.setUserId(userId);
@@ -92,5 +97,4 @@ public class UserProgressService {
 
         return userProgress;
     }
-
 }

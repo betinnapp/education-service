@@ -1,5 +1,6 @@
 package com.betinnapp.educationservice.service;
 
+import com.betinnapp.educationservice.exception.InvalidTokenException;
 import com.betinnapp.educationservice.model.User;
 import com.betinnapp.educationservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,5 +20,10 @@ public class UserService {
 
     public UUID findUserIdByToken(UUID token) {
         return userRepository.findByToken(token).getId();
+    }
+
+    public void tokenIsValid(UUID token) throws InvalidTokenException {
+        if (userRepository.findByToken(token) == null)
+            throw new InvalidTokenException();
     }
 }
