@@ -29,7 +29,7 @@ public class UserProgressService {
 
     public void generateFirstProgressByToken(UUID userToken) {
         User user = userService.findUserByToken(userToken);
-        int steps = user.getInitialScore().intValue() / 5;
+        int steps = user.getInitialScore().intValue() / 2;
         List<Module> modules = moduleService.findAll();
 
         for (int x = 0; x < steps; x++) {

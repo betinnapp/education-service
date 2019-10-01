@@ -35,34 +35,44 @@ public class ModuleController {
 
     @ResponseStatus(code = HttpStatus.OK)
     @GetMapping(path = "/list")
-    public List<Module> listModules(@RequestBody AuthTokenDTO token) throws InvalidTokenException {
-
-        userService.tokenIsValid(token.get());
-        return moduleService.listModulesByToken(token.get());
+    public List<Module> listModules(@RequestHeader(name = "authorization") String authorization) throws InvalidTokenException {
+        UUID authToken =  UUID.fromString(authorization);
+        userService.tokenIsValid(authToken);
+        return moduleService.listModulesByToken(authToken);
     }
 
     @ResponseStatus(code = HttpStatus.OK)
     @GetMapping(path = "/{moduleId}/submodule/{submoduleId}")
-    public Submodule getSubmodule(@PathVariable("submoduleId") String submoduleId, @RequestBody AuthTokenDTO token) throws InvalidTokenException, NotFoundException {
-
-        userService.tokenIsValid(token.get());
+    public Submodule getSubmodule(@PathVariable("submoduleId") String submoduleId, @RequestHeader(name = "authorization") String authorization) throws InvalidTokenException, NotFoundException {
+        UUID authToken =  UUID.fromString(authorization);
+        userService.tokenIsValid(authToken);
         return submoduleService.getSubmoduleByModuleIdAndSubmoduleId(UUID.fromString(submoduleId));
     }
 
     @ResponseStatus(code = HttpStatus.OK)
-    @PostMapping(path = "/{moduleId}/submodule/{submoduleId}/completed")
-    public void completeSubmodule(@PathVariable("submoduleId") String submoduleId, @PathVariable("moduleId") String moduleId, @RequestBody AuthTokenDTO token) throws InvalidTokenException, NotFoundException {
+    @GetMapping(path = "/{moduleId}")
+    public Module getModule(@PathVariable("moduleId") String moduleId, @RequestHeader(name = "authorization") String authorization) throws InvalidTokenException, NotFoundException {
+        UUID authToken =  UUID.fromString(authorization);
+        userService.tokenIsValid(authToken);
+        return moduleService.getModule(UUID.fromString(moduleId));
+    }
 
-        userService.tokenIsValid(token.get());
-        userProgressService.completeSubmodule(UUID.fromString(submoduleId), UUID.fromString(moduleId), token.get());
+    @ResponseStatus(code = HttpStatus.OK)
+    @PostMapping(path = "/{moduleId}/submodule/{submoduleId}/completed")
+    public void completeSubmodule(@PathVariable("submoduleId") String submoduleId, @PathVariable("moduleId") String moduleId, @RequestHeader(name = "authorization") String authorization) throws InvalidTokenException, NotFoundException {
+
+        UUID authToken =  UUID.fromString(authorization);
+        userService.tokenIsValid(authToken);
+        userProgressService.completeSubmodule(UUID.fromString(submoduleId), UUID.fromString(moduleId), authToken);
     }
 
     @ResponseStatus(code = HttpStatus.OK)
     @PostMapping(path = "/unlock/next")
-    public void unlockModule(@RequestBody AuthTokenDTO token) throws InvalidTokenException {
+    public void unlockModule(@RequestHeader(name = "authorization") String authorization) throws InvalidTokenException {
 
-        userService.tokenIsValid(token.get());
-        userProgressService.unlockNextModuleByToken(token.get());
+        UUID authToken =  UUID.fromString(authorization);
+        userService.tokenIsValid(authToken);
+        userProgressService.unlockNextModuleByToken(authToken);
     }
 
 }

@@ -31,6 +31,10 @@ public class ModuleService {
         return getModuleProgression(modules, userProgress);
     }
 
+    public Module getModule(UUID moduleId) {
+        return moduleRepository.findById(moduleId).orElse(null);
+    }
+
     private List<Module> getModuleProgression(List<Module> modules, HashMap<UUID, StatusType> userProgress) {
         for (Module m : modules) {
             if (userProgress.containsKey(m.getId())) {
