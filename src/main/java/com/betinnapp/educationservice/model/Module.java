@@ -35,6 +35,7 @@ public class Module {
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "module_id")
+    @OrderBy("submoduleOrder")
     private Collection<Submodule> submodule;
 
     @Column

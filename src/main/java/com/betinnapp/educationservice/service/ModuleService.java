@@ -7,6 +7,7 @@ import com.betinnapp.educationservice.repository.ModuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -31,8 +32,10 @@ public class ModuleService {
         return getModuleProgression(modules, userProgress);
     }
 
-    public Module getModule(UUID moduleId) {
-        return moduleRepository.findById(moduleId).orElse(null);
+    public Module getModule(UUID moduleId, UUID token) {
+        Module module = moduleRepository.findByIdOrderByModuleOrder(moduleId).orElse(null);
+        HashMap<UUID, StatusType> userProgress = userProgressService.getUserProgressByToken(token);
+        return getModuleProgression(Collections.singletonList(module),userProgress).get(0);
     }
 
     private List<Module> getModuleProgression(List<Module> modules, HashMap<UUID, StatusType> userProgress) {

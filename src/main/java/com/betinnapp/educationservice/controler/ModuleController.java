@@ -54,7 +54,7 @@ public class ModuleController {
     public Module getModule(@PathVariable("moduleId") String moduleId, @RequestHeader(name = "authorization") String authorization) throws InvalidTokenException, NotFoundException {
         UUID authToken =  UUID.fromString(authorization);
         userService.tokenIsValid(authToken);
-        return moduleService.getModule(UUID.fromString(moduleId));
+        return moduleService.getModule(UUID.fromString(moduleId),authToken);
     }
 
     @ResponseStatus(code = HttpStatus.OK)

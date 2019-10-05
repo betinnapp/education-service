@@ -10,5 +10,5 @@ import java.util.UUID;
 @Repository
 public interface ModuleRepository extends JpaRepository<Module, UUID> {
 
-    Optional<Module> findById(UUID moduleID);
+    Optional<Module> findByIdOrderByModuleOrder(UUID moduleID);
 }
