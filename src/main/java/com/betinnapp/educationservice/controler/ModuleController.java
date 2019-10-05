@@ -75,4 +75,15 @@ public class ModuleController {
         userProgressService.unlockNextModuleByToken(authToken);
     }
 
+    @ResponseStatus(code = HttpStatus.OK)
+    @GetMapping(path = "/quick-access")
+    public List<Module> quickAcess(@RequestHeader(name = "authorization") String authorization) throws InvalidTokenException {
+
+        UUID authToken =  UUID.fromString(authorization);
+        userService.tokenIsValid(authToken);
+        return moduleService.getQuickAcess(authToken);
+    }
+
+
+
 }

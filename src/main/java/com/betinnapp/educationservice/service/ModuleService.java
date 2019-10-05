@@ -7,10 +7,7 @@ import com.betinnapp.educationservice.repository.ModuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ModuleService {
@@ -35,7 +32,7 @@ public class ModuleService {
     public Module getModule(UUID moduleId, UUID token) {
         Module module = moduleRepository.findByIdOrderByModuleOrder(moduleId).orElse(null);
         HashMap<UUID, StatusType> userProgress = userProgressService.getUserProgressByToken(token);
-        return getModuleProgression(Collections.singletonList(module),userProgress).get(0);
+        return getModuleProgression(Collections.singletonList(module), userProgress).get(0);
     }
 
     private List<Module> getModuleProgression(List<Module> modules, HashMap<UUID, StatusType> userProgress) {
@@ -52,6 +49,32 @@ public class ModuleService {
         }
 
         return modules;
+    }
+
+    public List<Module> getQuickAcess(UUID token) {
+
+        List<Module> modules = moduleRepository.findAll();
+        List<Module> quickAcess = new ArrayList<>();
+        HashMap<UUID, StatusType> userProgress = userProgressService.getUserProgressByToken(token);
+
+        if (userProgress != null && userProgress.isEmpty())
+            userProgressService.generateFirstProgressByToken(token);
+
+        List<Module> moduleProgression = getModuleProgression(modules, userProgress);
+
+        for (Module m : moduleProgression) {
+            if (m.getStatus() == StatusType.UNLOCKED) {
+                quickAcess.add(m);
+            }
+        }
+
+        for (Module m : moduleProgression) {
+            if (m.getStatus() == StatusType.COMPLETED) {
+                quickAcess.add(m);
+            }
+        }
+
+        return quickAcess;
     }
 
     public List<Module> findAll() {
