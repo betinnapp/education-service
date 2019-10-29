@@ -32,6 +32,9 @@ public class UserProgressService {
         int steps = user.getInitialScore().intValue() / 2;
         List<Module> modules = moduleService.findAll();
 
+        if (steps == 0)
+            steps=1;
+
         for (int x = 0; x < steps; x++) {
             unlockNextModule(user, modules);
         }
