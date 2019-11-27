@@ -2,12 +2,9 @@ package com.betinnapp.educationservice.controler;
 
 import com.betinnapp.educationservice.exception.InvalidTokenException;
 import com.betinnapp.educationservice.exception.NotFoundException;
+import com.betinnapp.educationservice.model.Coin;
 import com.betinnapp.educationservice.model.Submodule;
-import com.betinnapp.educationservice.model.dto.AuthTokenDTO;
-import com.betinnapp.educationservice.service.ModuleService;
-import com.betinnapp.educationservice.service.SubmoduleService;
-import com.betinnapp.educationservice.service.UserProgressService;
-import com.betinnapp.educationservice.service.UserService;
+import com.betinnapp.educationservice.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +29,9 @@ public class ModuleController {
 
     @Autowired
     private UserProgressService userProgressService;
+
+    @Autowired
+    private CoinService coinService;
 
     @ResponseStatus(code = HttpStatus.OK)
     @GetMapping(path = "/list")
@@ -84,6 +84,12 @@ public class ModuleController {
         return moduleService.getQuickAcess(authToken);
     }
 
-
+    @ResponseStatus(code = HttpStatus.OK)
+    @GetMapping(path = "/coin")
+    public Coin getCoin(@RequestHeader(name = "authorization") String authorization) throws InvalidTokenException {
+        UUID authToken =  UUID.fromString(authorization);
+        userService.tokenIsValid(authToken);
+        return coinService.getCoinByToken(authToken);
+    }
 
 }

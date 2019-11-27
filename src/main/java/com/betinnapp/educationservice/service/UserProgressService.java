@@ -27,6 +27,9 @@ public class UserProgressService {
     @Autowired
     private ModuleService moduleService;
 
+    @Autowired
+    private CoinService coinService;
+
     public void generateFirstProgressByToken(UUID userToken) {
         User user = userService.findUserByToken(userToken);
         int steps = user.getInitialScore().intValue() / 2;
@@ -111,6 +114,8 @@ public class UserProgressService {
 
         verifyModuleCompletition(moduleID, userToken);
         verifySubmoduleUnlock(moduleID, userToken);
+
+        coinService.addCoin(userID, 1);
     }
 
     public void verifyModuleCompletition(UUID moduleID, UUID userToken) {

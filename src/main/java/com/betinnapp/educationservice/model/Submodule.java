@@ -38,6 +38,9 @@ public class Submodule {
     @Column
     private int submoduleOrder;
 
+    @Column
+    private int reward;
+
     @Transient
     private StatusType status;
 
@@ -95,5 +98,13 @@ public class Submodule {
 
     public void setSubmoduleOrder(int submoduleOrder) {
         this.submoduleOrder = submoduleOrder;
+    }
+
+    public int getReward() {
+        return reward;
+    }
+
+    public void setReward(int reward) {
+        this.reward = reward;
     }
 }
