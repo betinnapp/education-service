@@ -1,5 +1,6 @@
 package com.betinnapp.educationservice.service;
 
+import com.betinnapp.educationservice.exception.NotFoundException;
 import com.betinnapp.educationservice.model.Module;
 import com.betinnapp.educationservice.model.Submodule;
 import com.betinnapp.educationservice.model.User;
@@ -26,6 +27,9 @@ public class UserProgressService {
 
     @Autowired
     private ModuleService moduleService;
+
+    @Autowired
+    private SubmoduleService submoduleService;
 
     @Autowired
     private CoinService coinService;
@@ -115,7 +119,16 @@ public class UserProgressService {
         verifyModuleCompletition(moduleID, userToken);
         verifySubmoduleUnlock(moduleID, userToken);
 
-        coinService.addCoin(userID, 1);
+        int score;
+
+        try {
+            Submodule submodule = submoduleService.getSubmoduleByModuleIdAndSubmoduleId(submoduleID);
+            score = submodule.getReward() >= 0 ? submodule.getReward() : 1;
+        } catch (NotFoundException e) {
+            score = 1;
+        }
+
+        coinService.addCoin(userID, score);
     }
 
     public void verifyModuleCompletition(UUID moduleID, UUID userToken) {
